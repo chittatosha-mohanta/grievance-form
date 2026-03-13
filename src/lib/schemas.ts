@@ -18,8 +18,8 @@ export const stepThreeSchema = z.object({
     evidenceDescription: z.string().optional(),
     witnessName: z.string().optional(),
     witnessContact: z.string().optional(),
-    agreeToTerms: z.literal(true, {
-        errorMap: () => ({ message: "You must agree to the terms" }),
+    agreeToTerms: z.boolean().refine((val) => val === true, {
+        message: "You must agree to the terms",
     }),
 })
 

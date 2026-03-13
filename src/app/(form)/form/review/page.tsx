@@ -13,16 +13,23 @@ import FormStepper from "@/components/ui/FormStepper"
 import FormNavigation from "@/components/form/FormNavigation"
 import { submitForm } from "@/app/actions/submit"
 
-function ReviewField({ label, value }: { label: string; value?: string | boolean }) {
+function ReviewField({ label, value }: { label: string; value?: string | boolean | null | number }) {
+    const display = () => {
+        if (value === true) return "✓ Yes"
+        if (value === false) return "✗ No"
+        if (value === null || value === undefined || value === "") {
+            return <span style={{ color: "#aaa" }}>Not provided</span>
+        }
+        return String(value)
+    }
+
     return (
         <Box>
             <Typography variant="caption" color="text.secondary" display="block">
                 {label}
             </Typography>
             <Typography variant="body1" fontWeight={500} mt={0.3}>
-                {typeof value === "boolean"
-                    ? (value ? "✓ Yes" : "✗ No")
-                    : value || <span style={{ color: "#aaa" }}>Not provided</span>}
+                {display()}
             </Typography>
         </Box>
     )
@@ -94,7 +101,6 @@ export default function ReviewPage() {
 
             <Stack spacing={3}>
 
-                {/* Section 1 — Personal Info */}
                 <SectionCard title="Personal Information" onEdit={() => goTo(1, "/form/step-1")}>
                     <ReviewField label="First Name" value={data.firstName} />
                     <ReviewField label="Last Name" value={data.lastName} />
@@ -102,7 +108,6 @@ export default function ReviewPage() {
                     <ReviewField label="Phone" value={data.phone} />
                 </SectionCard>
 
-                {/* Section 2 — Grievance Details */}
                 <SectionCard title="Grievance Details" onEdit={() => goTo(2, "/form/step-2")}>
                     <ReviewField label="Grievance Type" value={data.grievanceType} />
                     <ReviewField label="Date of Incident" value={data.dateOfIncident} />
@@ -110,12 +115,11 @@ export default function ReviewPage() {
                     <ReviewField label="Description" value={data.description} />
                 </SectionCard>
 
-                {/* Section 3 — Supporting Info */}
                 <SectionCard title="Supporting Information" onEdit={() => goTo(3, "/form/step-3")}>
                     <ReviewField label="Evidence" value={data.evidenceDescription} />
                     <ReviewField label="Witness Name" value={data.witnessName} />
                     <ReviewField label="Witness Contact" value={data.witnessContact} />
-                    <ReviewField label="Agreed to Terms" value={data.agreeToTerms} />
+                    <ReviewField label="Agreed to Terms" value={data.agreeToTerms === true} />
                 </SectionCard>
 
             </Stack>
