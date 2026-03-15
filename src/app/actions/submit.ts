@@ -15,7 +15,14 @@ export async function submitForm(data: Partial<FullFormSchema>) {
     // Simulate saving to database
     await new Promise((r) => setTimeout(r, 1500))
 
-    console.log("✅ Grievance submitted:", result.data)
+    const submissionId = `GRV-${Date.now()}`
 
-    return { success: true, id: `GRV-${Date.now()}` }
+    // Server terminal log for submitted grievance data
+    console.log("Grievance submitted:", {
+        id: submissionId,
+        submittedAt: new Date().toISOString(),
+        data: result.data,
+    })
+
+    return { success: true, id: submissionId }
 }

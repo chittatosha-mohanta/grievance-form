@@ -1,164 +1,107 @@
-# Grievance Submission Form
+# Grievance Form
 
-A production-ready multi-step grievance/request submission workflow built with **Next.js App Router**, **TypeScript**, **Material UI**, and **Zod** validation.
+Multi-step grievance submission app built with Next.js App Router, TypeScript, Material UI, React Hook Form, Zod, and Zustand.
 
----
+## What This Project Does
 
-## Live Demo
+- Collects grievance details through a 4-step flow.
+- Validates each step on the client with Zod.
+- Re-validates full payload on submit in a server action.
+- Supports local draft save and restore.
+- Provides a review screen before final submit.
 
-🔗 [https://grievance-form-gaqq.vercel.app](https://grievance-form-gaqq.vercel.app)
+## Current Status
 
----
-
-## Features
-
-- ✅ Multi-step form with **Next / Back** navigation (4 steps)
-- ✅ **Per-step Zod validation** — only validates current step fields
-- ✅ **Draft save & restore** — progress persists in localStorage via Zustand
-- ✅ **Review & Submit** page with edit links back to each step
-- ✅ **Server Action** for final submission with server-side re-validation
-- ✅ Clean **App Router** folder structure with route groups
-- ✅ Built entirely with **Material UI** components
-
----
+- Submissions are validated and a mock grievance ID is generated.
+- Final submissions are not persisted to a database yet.
+- Drafts are stored in browser local storage.
 
 ## Tech Stack
 
-| Technology | Version | Purpose |
-|---|---|---|
-| Next.js | 16.x | Framework & App Router |
-| React | 18.x | UI library |
-| TypeScript | 5.x | Type safety |
-| Zod | 3.x | Schema validation |
-| React Hook Form | 7.x | Form state management |
-| Material UI | 6.x | Component library |
-| Zustand | 5.x | Global state + draft persistence |
+- Next.js 16
+- React 19
+- TypeScript 5
+- Material UI 7
+- React Hook Form 7
+- Zod 4
+- Zustand 5
 
----
+## App Flow
 
-## Project Structure
-```
-src/
-├── app/
-│   ├── (form)/
-│   │   └── form/
-│   │       ├── layout.tsx        # Shared form layout wrapper
-│   │       ├── step-1/page.tsx   # Step 1 — Personal information
-│   │       ├── step-2/page.tsx   # Step 2 — Grievance details
-│   │       ├── step-3/page.tsx   # Step 3 — Supporting information
-│   │       ├── review/page.tsx   # Step 4 — Review & submit
-│   │       └── success/page.tsx  # Confirmation page
-│   ├── actions/
-│   │   └── submit.ts             # Server Action (form submission)
-│   ├── providers.tsx             # MUI ThemeProvider wrapper
-│   └── layout.tsx                # Root layout with AppRouterCacheProvider
-├── components/
-│   ├── form/
-│   │   └── FormNavigation.tsx    # Reusable Next/Back buttons
-│   └── ui/
-│       └── FormStepper.tsx       # MUI Stepper progress indicator
-├── lib/
-│   └── schemas.ts                # All Zod schemas + inferred TS types
-├── store/
-│   └── formStore.ts              # Zustand store with localStorage persistence
-└── types/
-    └── form.ts                   # Shared TypeScript types
-```
+1. Step 1: Personal Information
+2. Step 2: Grievance Details
+3. Step 3: Supporting Information
+4. Review and Submit
+5. Success page
 
----
+## Draft Behavior
 
-## Getting Started
+Two local storage keys are used:
 
-### Prerequisites
+- `grievance-form-draft`: in-progress persisted state from Zustand.
+- `grievance-form-saved-draft`: explicit draft saved from the Review page.
 
-- Node.js **v18** or higher
-- npm **v9** or higher
-- Git
+User flow:
 
-### Installation & Setup
+1. Fill the form steps.
+2. On Review page, click Save Draft (left-side button).
+3. App returns to Step 1.
+4. Click Load Saved Draft button at the bottom to restore saved data.
 
-**1. Clone the repository**
-```bash
-git clone https://github.com/chittatosha-mohanta/grievance-form.git
-cd grievance-form
-```
+## Run Locally
 
-**2. Install dependencies**
 ```bash
 npm install
-```
-
-**3. Run the development server**
-```bash
 npm run dev
 ```
 
-**4. Open in browser**
-```
+Open:
+
+```text
 http://localhost:3000
 ```
 
-The home page automatically redirects to `/form/step-1`.
+## Available Scripts
 
----
-
-## How It Works
-
-### Multi-step Navigation
-The form uses Next.js App Router with a route group `(form)` containing 4 pages — `step-1`, `step-2`, `step-3`, and `review`. Navigation between steps uses `useRouter().push()`. A shared `layout.tsx` wraps all steps with the MUI Stepper and card container.
-
-### Per-step Validation
-Each step has its own Zod schema in `src/lib/schemas.ts`:
-
-- `stepOneSchema` — validates personal information fields
-- `stepTwoSchema` — validates grievance details
-- `stepThreeSchema` — validates supporting info + terms agreement
-- `fullFormSchema` — merged schema used for final server-side validation
-
-React Hook Form uses `zodResolver` to trigger validation only when the user clicks Next, keeping the UX clean.
-
-### Draft Save & Restore
-Zustand's `persist` middleware automatically syncs form state to `localStorage` under the key `grievance-form-draft`. If a user refreshes mid-form or closes the tab, their progress is fully restored when they return.
-
-### Server Action
-`src/app/actions/submit.ts` is marked with `"use server"`. It receives the complete form data from the Review page, re-validates it using `fullFormSchema.safeParse()`, and processes the submission. This ensures data integrity regardless of client-side state. In a production app, this is where you would connect to a database (Prisma, Supabase, etc.).
-
----
-
-## Form Flow
-```
-/form/step-1  →  Personal Info
-      ↓
-/form/step-2  →  Grievance Details
-      ↓
-/form/step-3  →  Supporting Information
-      ↓
-/form/review  →  Review & Submit (calls Server Action)
-      ↓
-/form/success →  Confirmation
-```
-
----
-
-## Scripts
 ```bash
-npm run dev      # Start development server (Turbopack)
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run ESLint
+npm run dev
+npm run build
+npm run start
+npm run lint
 ```
 
----
+## Project Structure
 
-## Deployment
+```text
+src/
+      app/
+            (form)/form/
+                  step-1/page.tsx
+                  step-2/page.tsx
+                  step-3/page.tsx
+                  review/page.tsx
+                  success/page.tsx
+            actions/submit.ts
+      components/
+            form/FormNavigation.tsx
+            ui/FormStepper.tsx
+      lib/schemas.ts
+      store/formStore.ts
+      types/form.ts
+```
 
-This project is deployed on **Vercel** with zero configuration. Every push to the `main` branch triggers an automatic redeployment.
+## Submission Data
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/chittatosha-mohanta/grievance-form)
+- Final submitted data is not stored permanently yet.
+- To persist submissions, connect `app/actions/submit.ts` to a database (for example PostgreSQL + Prisma).
 
----
+## Next Improvements
+
+- Add database persistence for final submissions.
+- Add submission listing/admin view.
+- Add autosave timestamp in UI.
+- Add test coverage for schemas and store.
 
 ## Author
 
-**Chittatosha Mohanta**
-[GitHub](https://github.com/chittatosha-mohanta)
+Chittatosha Mohanta

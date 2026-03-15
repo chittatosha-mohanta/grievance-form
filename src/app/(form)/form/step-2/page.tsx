@@ -43,7 +43,7 @@ export default function StepTwoPage() {
 
     const onNext = handleSubmit((values) => {
         updateData(values)
-        setStep(3)
+        setStep(2)
         router.push("/form/step-3")
     })
 
@@ -106,7 +106,7 @@ export default function StepTwoPage() {
             </Stack>
 
             <FormNavigation
-                onBack={() => { setStep(1); router.push("/form/step-1") }}
+                onBack={() => { setStep(0); router.push("/form/step-1") }}
                 onNext={onNext}
             />
         </>

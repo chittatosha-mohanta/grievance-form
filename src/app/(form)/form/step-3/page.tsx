@@ -34,7 +34,7 @@ export default function StepThreePage() {
 
     const onNext = handleSubmit((values) => {
         updateData(values)
-        setStep(4)
+        setStep(3)
         router.push("/form/review")
     })
 
@@ -99,7 +99,7 @@ export default function StepThreePage() {
             </Stack>
 
             <FormNavigation
-                onBack={() => { setStep(2); router.push("/form/step-2") }}
+                onBack={() => { setStep(1); router.push("/form/step-2") }}
                 onNext={onNext}
             />
         </>

@@ -2,8 +2,9 @@
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-import { TextField, Typography, Stack } from "@mui/material"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { TextField, Typography, Stack, Box, Button, Alert } from "@mui/material"
 import { stepOneSchema, type StepOneSchema } from "@/lib/schemas"
 import { useFormStore } from "@/store/formStore"
 import FormStepper from "@/components/ui/FormStepper"
@@ -11,11 +12,15 @@ import FormNavigation from "@/components/form/FormNavigation"
 
 export default function StepOnePage() {
     const router = useRouter()
-    const { data, updateData, setStep } = useFormStore()
+    const searchParams = useSearchParams()
+    const { data, updateData, setStep, loadLocalDraft, hasLocalSavedDraft } = useFormStore()
+    const [canLoadSavedDraft, setCanLoadSavedDraft] = useState(false)
+    const [loadMessage, setLoadMessage] = useState<string | null>(null)
 
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm<StepOneSchema>({
         resolver: zodResolver(stepOneSchema),
@@ -29,9 +34,30 @@ export default function StepOnePage() {
 
     const onNext = handleSubmit((values) => {
         updateData(values)
-        setStep(2)
+        setStep(1)
         router.push("/form/step-2")
     })
+
+    useEffect(() => {
+        setCanLoadSavedDraft(hasLocalSavedDraft())
+    }, [hasLocalSavedDraft])
+
+    const handleLoadSavedDraft = () => {
+        const savedData = loadLocalDraft()
+
+        if (!savedData) {
+            setLoadMessage("No valid saved draft found.")
+            return
+        }
+
+        reset({
+            firstName: savedData.firstName ?? "",
+            lastName: savedData.lastName ?? "",
+            email: savedData.email ?? "",
+            phone: savedData.phone ?? "",
+        })
+        setLoadMessage("Saved draft loaded. Continue to the next steps to review all restored fields.")
+    }
 
     return (
         <>
@@ -42,6 +68,12 @@ export default function StepOnePage() {
             <Typography variant="body2" color="text.secondary" mb={3}>
                 Tell us who you are so we can follow up with you.
             </Typography>
+
+            {searchParams.get("draftSaved") === "1" && (
+                <Alert severity="success" sx={{ mb: 3 }}>
+                    Draft saved locally. You can load it below anytime.
+                </Alert>
+            )}
 
             <Stack spacing={3}>
                 <TextField
@@ -71,6 +103,20 @@ export default function StepOnePage() {
             </Stack>
 
             <FormNavigation isFirst onNext={onNext} />
+
+            {canLoadSavedDraft && (
+                <Box mt={2}>
+                    <Button variant="text" onClick={handleLoadSavedDraft}>
+                        Load Saved Draft
+                    </Button>
+                </Box>
+            )}
+
+            {loadMessage && (
+                <Alert severity="info" sx={{ mt: 2 }}>
+                    {loadMessage}
+                </Alert>
+            )}
         </>
     )
 }

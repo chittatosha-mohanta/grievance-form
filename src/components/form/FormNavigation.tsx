@@ -4,6 +4,7 @@ import { Box, Button, CircularProgress } from "@mui/material"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 import SendIcon from "@mui/icons-material/Send"
+import SaveIcon from "@mui/icons-material/Save"
 
 type Props = {
     onBack?: () => void
@@ -12,6 +13,8 @@ type Props = {
     isLast?: boolean
     isLoading?: boolean
     nextLabel?: string
+    onLeftAction?: () => void
+    leftLabel?: string
 }
 
 export default function FormNavigation({
@@ -21,17 +24,30 @@ export default function FormNavigation({
     isLast = false,
     isLoading = false,
     nextLabel = "Next",
+    onLeftAction,
+    leftLabel,
 }: Props) {
     return (
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
-            <Button
-                variant="outlined"
-                startIcon={<ArrowBackIcon />}
-                onClick={onBack}
-                disabled={isFirst}
-            >
-                Back
-            </Button>
+            {onLeftAction && leftLabel ? (
+                <Button
+                    variant="outlined"
+                    startIcon={<SaveIcon />}
+                    onClick={onLeftAction}
+                    disabled={isLoading}
+                >
+                    {leftLabel}
+                </Button>
+            ) : (
+                <Button
+                    variant="outlined"
+                    startIcon={<ArrowBackIcon />}
+                    onClick={onBack}
+                    disabled={isFirst}
+                >
+                    Back
+                </Button>
+            )}
 
             <Button
                 variant="contained"
