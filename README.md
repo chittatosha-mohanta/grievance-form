@@ -58,7 +58,7 @@ npm run dev
 Open:
 
 ```text
-http://localhost:3000
+https://grievance-form-nu.vercel.app/form/step-1
 ```
 
 ## Available Scripts
